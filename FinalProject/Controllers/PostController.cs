@@ -48,6 +48,7 @@ namespace FinalProject.Controllers
                 IsPrivate = dto.IsPrivate,
                 Location = dto.Location,
                 UserId = user.Id,
+                User = user,
                 CommentsExist = true
             };
             await _db.Posts.AddAsync(newPost);
@@ -169,9 +170,9 @@ namespace FinalProject.Controllers
                 .Include(x => x.Images)
                 .Include(x => x.Videos)
                 .Include(x => x.Likes)
+                .ThenInclude(x => x.User)
                 .Include(x => x.Comments)
-                .ThenInclude(x => x.Comments)
-                .ThenInclude(x => x.Likes)
+                .ThenInclude(x => x.User)
                 .Where(x => x.UserId == user.Id).OrderByDescending(x => x.Created).Skip(currentSkip).Take(currentTake).ToListAsync();
             foreach(var item in posts)
             {
@@ -181,6 +182,20 @@ namespace FinalProject.Controllers
                 }
                 item.Images.ForEach(x => x.ImageUrl = @"Resources\Images\" + x.ImageUrl);
                 item.Videos.ForEach(x => x.VideoUrl = @"Resources\Videos\" + x.VideoUrl);
+                foreach (Comment com in item.Comments)
+                {
+                    if (com.User.ImageUrl != null && !com.User.ImageUrl.Contains(@"Resources\Images\"))
+                    {
+                        com.User.ImageUrl = @"Resources\Images\" + com.User.ImageUrl;
+                    }
+                }
+                foreach (PostLike lik in item.Likes)
+                {
+                    if (lik.User.ImageUrl != null && !lik.User.ImageUrl.Contains(@"Resources\Images\"))
+                    {
+                        lik.User.ImageUrl = @"Resources\Images\" + lik.User.ImageUrl;
+                    }
+                }
             }
             int count = _db.Posts.Where(x => x.UserId == user.Id).Count();
             return Ok(new { count, userPosts = posts });
@@ -195,9 +210,9 @@ namespace FinalProject.Controllers
                 .Include(x => x.Images)
                 .Include(x => x.Videos)
                 .Include(x => x.Likes)
+                .ThenInclude(x=> x.User)
                 .Include(x => x.Comments)
-                .ThenInclude(x => x.Comments)
-                .ThenInclude(x => x.Likes)
+                .ThenInclude(x=> x.User)
                 .Where(x => x.IsPrivate == false)
                 .OrderByDescending(x => x.Created).Skip(currentSkip).Take(currentTake).ToListAsync();
             foreach (var item in posts)
@@ -207,6 +222,20 @@ namespace FinalProject.Controllers
                 if (item.User.ImageUrl!= null && !item.User.ImageUrl.Contains(@"Resources\Images\"))
                 {
                     item.User.ImageUrl = @"Resources\Images\" + item.User.ImageUrl;
+                }
+                foreach(Comment com in item.Comments)
+                {
+                    if (com.User.ImageUrl != null && !com.User.ImageUrl.Contains(@"Resources\Images\"))
+                    {
+                        com.User.ImageUrl = @"Resources\Images\" + com.User.ImageUrl;
+                    }
+                }
+                foreach (PostLike lik in item.Likes)
+                {
+                    if (lik.User.ImageUrl != null && !lik.User.ImageUrl.Contains(@"Resources\Images\"))
+                    {
+                        lik.User.ImageUrl = @"Resources\Images\" + lik.User.ImageUrl;
+                    }
                 }
             }
             List<Advertisement> ads = _db.Advertisements.OrderByDescending(x => x.Created).Where(x => x.IsExpired == false).ToList();
@@ -255,7 +284,7 @@ namespace FinalProject.Controllers
             {
                 item.Images.ForEach(x => x.ImageUrl = @"Resources\Images\" + x.ImageUrl);
                 item.Videos.ForEach(x => x.VideoUrl = @"Resources\Videos\" + x.VideoUrl);
-                if (!item.User.ImageUrl.Contains(@"Resources\Images\"))
+                if (item.User.ImageUrl!= null && !item.User.ImageUrl.Contains(@"Resources\Images\"))
                 {
                     item.User.ImageUrl = @"Resources\Images\" + item.User.ImageUrl;
                 }

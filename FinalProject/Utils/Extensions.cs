@@ -59,7 +59,7 @@ namespace FinalProject.Utils
     
                 <div class=""main"">
                     <div class=""img-wrapper"">
-                        <a href=""https://imgbb.com/""><img src=""https://i.ibb.co/DtJ5chy/undraw-join-re-w1lh.png"" alt=""undraw-join-re-w1lh"" border=""0""></a>
+                        <a href=""https://ibb.co/bmym7DN""><img src=""https://i.ibb.co/3d8dkQS/undraw-Join-re-w1lh-1.png"" alt=""undraw-Join-re-w1lh-1"" border=""0""></a>
                     </div>
                     <div class=""text-wrapper"">
                         <h2>Dear user,</h2>

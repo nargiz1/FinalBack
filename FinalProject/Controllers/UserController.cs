@@ -218,6 +218,7 @@ namespace FinalProject.Controllers
         {
             if (userId == null) return BadRequest("Id is null");
             var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound();
             if (user.ImageUrl != null)
             {
                 user.ImageUrl = @"Resources\Images\" + user.ImageUrl;
